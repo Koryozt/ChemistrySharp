@@ -1,57 +1,75 @@
-﻿using ChemistrySharp.URL.Path;
+﻿using ChemistrySharp.Helpers;
+using ChemistrySharp.URL.Path;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ChemistrySharp.URL
 {
 	public class RequestURL
 	{
 		private static readonly string _baseUrl = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/";
-		private static StringBuilder? _sb;
+		private static readonly IEnumerable<Namespaces> @namespaces = new Namespaces[] {
+				Namespaces.listkey,
+				Namespaces.formula,
+				Namespaces.sourceid,
+				Namespaces.xref,
+				Namespaces.cid };
+
 
 		// https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2244/property/MolecularFormula/JSON
 
-		public static string Create(object id, Domain domain, Namespaces namespaces, Operations operation, Output output)
+		public static string[] Create(object id, Domain domain = Domain.compound, Namespaces @namespace = Namespaces.cid, Operations? operation = null, Output output = Output.JSON, string? extra = null)
 		{
-			_sb = new StringBuilder(_baseUrl);
-			string strId = CheckType(id);
-		}
+			StringBuilder sb = new StringBuilder(_baseUrl);
+			
+			if (id is null)
+				throw new ArgumentNullException(nameof(id));
 
-		public static string Create(object id, Namespaces namespaces, Operations operation, Output output, StructureSearch structureSearch)
-		{
-			_sb = new StringBuilder(_baseUrl);
-		}
-		public static string CreateURL(object id, Namespaces namespaces, Operations operation, Output output, FastSearch fastSearch)
-		{
-			_sb = new StringBuilder(_baseUrl);
-		}
+			string identifier = ObjectHelper.CheckType(id), 
+				urlid = string.Empty, 
+				data = string.Empty;
+			
+			if (@namespace is Namespaces.sourceid)
+			{
+				identifier = identifier.Replace('/', '.');
+			}
 
-		public static string CreateURL(object id, Domain domain, Namespaces namespaces, Operations operation, Output output, Xref xref)
-		{
-			_sb = new StringBuilder(_baseUrl);
-		}
+			if (@namespaces.Contains(@namespace) || domain is Domain.sources)
+			{
+				urlid = HttpUtility.UrlEncode(identifier);
+			}
+			else
+			{
+				data = HttpUtility.UrlEncode(string.Join(",", @namespace, identifier));
+			}
 
-		public static string CreateURL(object id, Namespaces namespaces, Operations operation, Output output, string sourceName)
-		{
-			_sb = new StringBuilder(_baseUrl);
-		}
+			if (operation is Operations.property)
+			{
+				extra = $"{operation}/{extra}";
+			}
 
-		public static string CreateURL(object id, Namespaces namespaces, Operations operation, Output output, AssayType assayType)
-		{
-			_sb = new StringBuilder(_baseUrl);
-		}
+			IEnumerable<string> components = IEnumerableHelper.RemoveNull(
+				new string[] 
+				{
+					Convert.ToString(domain)!,
+					Convert.ToString(@namespace)!,
+					urlid,
+					Convert.ToString(operation)!,
+					extra!,
+					Convert.ToString(output)!
+				});
 
-		public static string CreateURL(object id, Namespaces namespaces, Operations operation, Output output, AssayTarget target)
-		{
-			_sb = new StringBuilder(_baseUrl);
-		}
+			sb.AppendJoin('/', components);
 
-		public static string CreateURL(object id, Domain domain, Namespaces namespaces, Operations operation, Output output, params string[] identifiers)
-		{
-			_sb = new StringBuilder(_baseUrl);
+			return new string[]
+			{
+				sb.ToString(),
+				data
+			};
 		}
 	}
 }

@@ -48,7 +48,7 @@
         cellac,
         name,
         listkey,
-
+        xref
     }
 
     // Compound domain namespaces.
@@ -68,23 +68,6 @@
         fastsimilarity_3d,
         fastsubstructure,
         fastsuperstructure
-    }
-
-    // Global domain namespace.
-
-    public enum Xref
-    {
-        RegistriID,
-        RN,
-        PubMedID,
-        MMDBID,
-        ProteinGI,
-        NucleotideGI,
-        TaxonomyID,
-        MIMID,
-        GeneID,
-        ProbeID,
-        PatentID
     }
 
     // Assay domain namespaces.
