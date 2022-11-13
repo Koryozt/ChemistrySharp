@@ -33,6 +33,100 @@ namespace ChemistrySharp.Classes
 			get => _atoms.Values.Select(x => x.Element);
 		}
 
+		public string CoordinateType
+		{
+			get 
+			{
+				IEnumerable<string> types = Record["coords"]![0]!["type"]!.ToObject<IEnumerable<string>>()!;
+				return string.Join(",", types);
+			} 
+		}
+
+		public int Charge
+		{
+			get
+			{
+				return Record["charge"]!.ToObject<int>()!;
+			}
+		}
+
+		public int HeavyAtomCount
+		{
+			get
+			{
+				if (!Record.ContainsKey("count") && Record["count"]!.ToObject<JObject>()!.ContainsKey("heavy_atom"))
+				{
+					return 0;
+				}
+
+				return Record["count"]!["heavy_atom"]!.ToObject<int>()!;
+			}
+		}
+
+		public int IsotopeAtomCount
+		{
+			get
+			{
+				if (!Record.ContainsKey("count") && Record["count"]!.ToObject<JObject>()!.ContainsKey("isotope_atom"))
+				{
+					return 0;
+				}
+
+				return Record["count"]!["isotope_atom"]!.ToObject<int>()!;
+			}
+		}
+
+		public int AtomStereoCount
+		{
+			get
+			{
+				if (!Record.ContainsKey("count") && Record["count"]!.ToObject<JObject>()!.ContainsKey("atom_chiral"))
+				{
+					return 0;
+				}
+
+				return Record["count"]!["atom_chiral"]!.ToObject<int>()!;
+			}
+		}
+		public int DefinedAtomStereoCount
+		{
+			get
+			{
+				if (!Record.ContainsKey("count") && Record["count"]!.ToObject<JObject>()!.ContainsKey("atom_chiral_def"))
+				{
+					return 0;
+				}
+
+				return Record["count"]!["atom_chiral_def"]!.ToObject<int>()!;
+			}
+		}
+
+		public int UndefinedAtomStereoCount
+		{
+			get
+			{
+				if (!Record.ContainsKey("count") && Record["count"]!.ToObject<JObject>()!.ContainsKey("atom_chiral_undef"))
+				{
+					return 0;
+				}
+
+				return Record["count"]!["atom_chiral_undef"]!.ToObject<int>()!;
+			}
+		}
+
+		public int CovalentUnitCount
+		{
+			get
+			{
+				if (!Record.ContainsKey("count") && Record["count"]!.ToObject<JObject>()!.ContainsKey("covalent_unit"))
+				{
+					return 0;
+				}
+
+				return Record["count"]!["covalent_unit"]!.ToObject<int>()!;
+			}
+		}
+
 		public JObject Record
 		{
 			get => _record!;
@@ -58,9 +152,6 @@ namespace ChemistrySharp.Classes
 			JObject record = await _getter.GetCompound(cid);
 			return new Compound(record);
 		}
-
-
-
 
 		private void SetupAtoms()
 		{
@@ -185,7 +276,7 @@ namespace ChemistrySharp.Classes
 
 		public override string ToString()
 		{
-			return new string($"Compound{CompoundID}");
+			return new string($"Compound({CompoundID})");
 		}
 
 		public override bool Equals(object? obj)
