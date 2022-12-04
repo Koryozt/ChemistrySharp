@@ -4,7 +4,21 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>ChemistrySharp</Title>
+    <Version>1.3.5</Version>
+    <Authors>KoryoZT</Authors>
+    <Description>C# library to work  in an easy way with the PubChem PUG REST Service.
+Allowing you to get all the information related to chemistry.</Description>
+    <Copyright>MIT License</Copyright>
+    <PackageIcon>cslogo.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Users\Administrador\Pictures\cslogo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
